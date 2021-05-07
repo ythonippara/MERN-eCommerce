@@ -17,22 +17,22 @@ const orderSchema = mongoose.Schema({
             product: { 
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
-                ref: "Product"
+                ref: 'Product'
             }
         }
     ],
     // Embedded object
     shippingAddress: {
-        address: { String, required: true },
-        city: { String, required: true },
-        postalCode: { String, required: true },
-        country: { String, required: true }
+        address: { type: String, required: true },
+        city: { type: String, required: true },
+        postalCode: { type: String, required: true },
+        country: { type: String, required: true }
     },
     paymentMethod: {
         type: String,
         required: true 
     },
-    paymentReuslt: {
+    paymentResult: {
         id: { type: String },
         status: { type: String },
         update_time: { type: String },
