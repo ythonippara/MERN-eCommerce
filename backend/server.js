@@ -1,6 +1,11 @@
-// Common JS, ES modules for frontend
-const express = require('express')
-const products = require('./data/products')
+// ESM style imports
+import express from 'express'
+import dotenv from 'dotenv'
+// Import of a file requires .js extension
+import products from './data/products.js'
+
+// Config will read .env file, parse the contents
+dotenv.config()
 
 // Initialize express
 const app = express()
@@ -21,4 +26,7 @@ app.get('/api/products/:id', (req, res) => {
     res.json(product)
 })
 
-app.listen(5000, console.log('Server is running on port 5000.'))
+// Pull port from the env var or if not found use 5000
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT, console.log(`Server is running in ${process.env.NODE_ENV} mode on port ${PORT}.`))
