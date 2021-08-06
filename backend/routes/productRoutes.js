@@ -11,6 +11,8 @@ import Product from '../models/productModel.js'
 router.get('/', asyncHandler(async (req, res) => {
     // Use Product model pass empty object will the data
     const products = await Product.find({})
+    //res.status(401)
+    //throw new Error ('Not Authorized!')
     // Serve json array
     res.json(products)
 }))
