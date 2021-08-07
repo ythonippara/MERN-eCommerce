@@ -1,7 +1,10 @@
 import { 
     PRODUCT_LIST_REQUEST, 
     PRODUCT_LIST_SUCCESS, 
-    PRODUCT_LIST_FAIL 
+    PRODUCT_LIST_FAIL, 
+    PRODUCT_DETAILS_REQUEST,
+    PRODUCT_DETAILS_SUCCESS,
+    PRODUCT_DETAILS_FAIL
 } from '../constants/productConstants'
 
 // Product List Reducer
@@ -15,6 +18,23 @@ export const productListReducer = (state = { products: [] }, action) => {
         case PRODUCT_LIST_SUCCESS:
             return { loading: false, products: action.payload }
         case PRODUCT_LIST_FAIL:
+            return { loading: false, error: action.payload }
+        default:
+            return state
+    }
+}
+
+// Set a singular product to an empty object, set reviews to an empty array
+export const productDetailsReducer = (state = { product: { reviews: [] } }, action) => {
+
+    // Use switch to evaluate type in the action object
+    switch (action.type) {
+        case PRODUCT_DETAILS_REQUEST:
+            // Use spread operator ... to add whatever else is in the current state
+            return { loading: true, ...state }
+        case PRODUCT_DETAILS_SUCCESS:
+            return { loading: false, product: action.payload }
+        case PRODUCT_DETAILS_FAIL:
             return { loading: false, error: action.payload }
         default:
             return state
