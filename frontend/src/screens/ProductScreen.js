@@ -11,8 +11,8 @@ import { listProductDetails } from '../actions/productActions'
 const ProductScreen = ({ history, match }) => {
     //const [product, setProduct] = useState([])
     
-    // Adding quantity field, default 0
-    const [qty, setQty] = useState(0)
+    // Adding quantity field, default 
+    const [qty, setQty] = useState(1)
 
     const dispatch = useDispatch()
 
@@ -94,16 +94,19 @@ const ProductScreen = ({ history, match }) => {
                                 <Row>
                                     <Col>Qty:</Col>
                                     <Col>
-                                        <Form.Control 
+                                      <Form.Control 
                                         as='select' 
                                         value={qty} 
-                                        onChange={(e) => setQty(e.target.value)}>
-                                            {[...Array(product.countInStock).keys()].map((x) => (
+                                        onChange={(e) => setQty(e.target.value)}
+                                      >
+                                          {[...Array(product.countInStock).keys()].map(
+                                              (x) => (
                                                 <option key={x + 1} value={x + 1}>
                                                     {x + 1}
                                                 </option>
-                                            ))}
-                                        </Form.Control>
+                                              )
+                                          )}
+                                      </Form.Control>
                                     </Col>
                                 </Row>
                             </ListGroup.Item>
