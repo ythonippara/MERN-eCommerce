@@ -30,6 +30,18 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
+// Encrypt the password before saving a new user, not used for profile updates
+userSchema.pre('save', async function(next) {
+    // Check if the password field has been modified
+    // isModified method is a part of mongoose
+    if(!this.isModified('password')) {
+        next()
+    }
+    // Generate salt, 10 is the number of rounds
+    const salt = await bcrypt.genSalt(10)
+    this.password =  await bcrypt.hash(this.password, salt)
+})
+
 // Create a user with user schema
 const User = mongoose.model('User', userSchema)
 
