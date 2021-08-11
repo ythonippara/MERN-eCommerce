@@ -93,8 +93,43 @@ const getUserProfile = asyncHandler(async (req, res) => {
     }
 })
 
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+// @access  Private
+const updateUserProfile = asyncHandler(async (req, res) => {
+    // Find user
+    // req.user can be used in any protected route
+    const user = await User.findById(req.user._id)
+
+    if(user) {
+        // Set a new name from body
+        user.name = req.body.name || user.name
+        user.email = req.body.email || user.email
+        // First, check if a password was sent
+        // So re-typing a new password is not required???
+        if(req.body.password) {
+            user.password = req.body.password
+        }
+
+        const updatedUser = await user.save()
+
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            token: generateToken(updatedUser._id),
+        })
+    } else {
+        // 404 - not found
+        res.status(404)
+        throw new Error('User not found')
+    }
+})
+
 export {
     authUser,
     registerUser,
     getUserProfile,
+    updateUserProfile,
 }
