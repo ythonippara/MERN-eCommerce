@@ -3,7 +3,8 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails } from '../actions/userActions'
+import { getUserDetails, updateUserProfile } from '../actions/userActions'
+import { USER_UPDATE_PROFILE_FAIL, USER_UPDATE_PROFILE_RESET } from '../constants/userConstants'
 
 const ProfileScreen = ({ location, history }) => {
     // Set up component level state
@@ -22,20 +23,25 @@ const ProfileScreen = ({ location, history }) => {
     const userLogin = useSelector(state => state.userLogin)
     const { userInfo } = userLogin
 
+    const userUpdateProfile = useSelector(state => state.userUpdateProfile)
+    const { success } = userUpdateProfile
+
     // Redirect if user is already logged in
     useEffect(() => {
         // Check for user info
         if(!userInfo) {
             history.push('/login')
         } else {
-            if(!user.name) {
+            if(!user.name || success) {
+                // Video 91 Bug Fixes
+                dispatch({ type: USER_UPDATE_PROFILE_RESET })
                 dispatch(getUserDetails('profile'))
             } else {
                 setName(user.name)
                 setEmail(user.email)
             }
         }
-    }, [dispatch, history, userInfo, user])
+    }, [dispatch, history, userInfo, user, success])
 
     // Pass in e for the form
     const submitHandler = (e) => {
@@ -47,7 +53,7 @@ const ProfileScreen = ({ location, history }) => {
             // How to check for empty values???
         } else {
             // Dispatch Update Profile
-            //dispatch()
+            dispatch(updateUserProfile({ id: user._id, name, email, password }))
         }
     }
 
@@ -57,6 +63,7 @@ const ProfileScreen = ({ location, history }) => {
           <h2>User Profile</h2>
           {message && <Message variant='danger'>{message}</Message>}
           {error && <Message variant='danger'>{error}</Message>}
+          {success && <Message variant='success'>Profile Updated!</Message>}
           {loading && <Loader />}
           <Form onSubmit={submitHandler}>
           <Form.Group controlId='name'>
