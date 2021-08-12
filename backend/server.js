@@ -7,6 +7,7 @@ import connectDB from './config/db.js'
 // Import of a file requires .js extension
 import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import orderRoutes from './routes/orderRoutes.js'
 
 // Config will read .env file, parse the contents
 dotenv.config()
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 // Mount routes
 app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
+app.use('/api/orders', orderRoutes)
 
 // Custom middleware
 app.use(notFound)
