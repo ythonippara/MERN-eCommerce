@@ -29,9 +29,13 @@ app.use('/api/products', productRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/orders', orderRoutes)
 
+// Config route (fetch PayPal Client ID)
+app.get('/api/config/paypal', (req, res) => 
+    res.send(process.env.PAYPAL_CLIENT_ID)
+)
+
 // Custom middleware
 app.use(notFound)
-
 app.use(errorHandler)
 
 // Pull port from the env var or if not found use 5000
