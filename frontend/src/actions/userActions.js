@@ -239,9 +239,7 @@ export const listUsers = () => async (dispatch, getState) => {
 
 export const deleteUser = (id) => async (dispatch, getState) => {
     try {
-        dispatch({
-            type: USER_DELETE_REQUEST
-        })
+        dispatch({ type: USER_DELETE_REQUEST })
 
         // Get access to the logged in user object
         const { userLogin: { userInfo } } = getState()
@@ -256,7 +254,6 @@ export const deleteUser = (id) => async (dispatch, getState) => {
         await axios.delete(`/api/users/${id}`, config)
 
         dispatch({ type: USER_DELETE_SUCCESS })
-        
     } catch (error) {
         dispatch({ 
             type: USER_DELETE_FAIL,
