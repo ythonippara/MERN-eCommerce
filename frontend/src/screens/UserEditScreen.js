@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
-import { getUserDetails } from '../actions/userActions'
+import { getUserDetails, updateUser } from '../actions/userActions'
+import { USER_UPDATE_RESET } from '../constants/userConstants'
 
 const UserEditScreen = ({ match, history }) => {
     const userId = match.params.id
@@ -21,22 +22,36 @@ const UserEditScreen = ({ match, history }) => {
     const userDetails = useSelector(state => state.userDetails)
     const { loading, error, user } = userDetails
 
+    // Check if the update was successful
+    const userUpdate = useSelector(state => state.userUpdate)
+    const { 
+        loading: loadingUpdate, 
+        error: errorUpdate, 
+        success: successUpdate 
+    } = userUpdate
+
     useEffect(() => {
-        // Check for user
-        // Match fetched ID to the ID from the URL
-        if(!user.name || user._id !== userId) {
-            dispatch(getUserDetails(userId))
+        if(successUpdate) {
+            dispatch({ type: USER_UPDATE_RESET })
+            history.push('/admin/userlist')
         } else {
-            setName(user.name)
-            setEmail(user.email)
-            setIsAdmin(user.isAdmin)
+            // Check for user
+            // Match fetched ID to the ID from the URL
+            if(!user.name || user._id !== userId) {
+                dispatch(getUserDetails(userId))
+            } else {
+                setName(user.name)
+                setEmail(user.email)
+                setIsAdmin(user.isAdmin)
+            }
         }
-    }, [dispatch, userId, user])
+    }, [dispatch, history, userId, user, successUpdate])
 
     // Pass in e for the form
     const submitHandler = (e) => {
         // Prevent the page from refreshing
         e.preventDefault()
+        dispatch(updateUser({ _id: userId, name, email, isAdmin }))
     }
 
     return (
@@ -46,6 +61,8 @@ const UserEditScreen = ({ match, history }) => {
             </Link>
             <FormContainer>
             <h1>Edit User</h1>
+            {loadingUpdate && <Loader />}
+            {errorUpdate && <Message variant='danger'>{errorUpdate}</Message>}
             {loading 
                 ? <Loader /> 
                 : error 
