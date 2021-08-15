@@ -29,7 +29,7 @@ const ProfileScreen = ({ location, history }) => {
     const { success } = userUpdateProfile
 
     const orderListMy = useSelector(state => state.orderListMy)
-    const { loading:loadingOrders, error:errorOrders, orders } = orderListMy
+    const { loading: loadingOrders, error: errorOrders, orders } = orderListMy
 
     // Redirect if user is already logged in
     useEffect(() => {
@@ -37,11 +37,11 @@ const ProfileScreen = ({ location, history }) => {
         if(!userInfo) {
             history.push('/login')
         } else {
-            if(!user.name || success) {
+            if(!user || !user.name || success) {
                 // Video 91 Bug Fixes
                 dispatch({ type: USER_UPDATE_PROFILE_RESET })
                 dispatch(getUserDetails('profile'))
-                dispatch(listMyOrders)
+                dispatch(listMyOrders())
             } else {
                 setName(user.name)
                 setEmail(user.email)
@@ -68,6 +68,7 @@ const ProfileScreen = ({ location, history }) => {
           <Col md={3}>
           <h2>User Profile</h2>
           {message && <Message variant='danger'>{message}</Message>}
+          {/**Redo error */}
           {error && <Message variant='danger'>{error}</Message>}
           {success && <Message variant='success'>Profile Updated!</Message>}
           {loading && <Loader />}
@@ -140,32 +141,22 @@ const ProfileScreen = ({ location, history }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {orders.map(order => (
+                            {orders.map((order) => (
                                 <tr key={order._id}>
-                                    {/** createdAt or paidAt?? 
-                                     * Substring the first 10 char : 0,9???
-                                    */}
+                                    <td>{order._id}</td>
                                     <td>{order.createdAt.substring(0, 10)}</td>
                                     <td>{order.totalPrice}</td>
                                     <td>
-                                        {order.isPaid ? (
-                                            order.paidAt.substring(0, 10)
-                                        ) : (
-                                            <i 
-                                                className='fas fa-times' 
-                                                style={{color: 'red'}}
-                                            />
-                                        )}
+                                        {order.isPaid 
+                                            ? order.paidAt.substring(0, 10)
+                                            : <i className='fas fa-times' style={{color: 'red'}} />
+                                        }
                                     </td>
                                     <td>
-                                        {order.isDelivered ? (
-                                            order.deliveredAt.substring(0, 10)
-                                        ) : (
-                                            <i 
-                                                className='fas fa-times' 
-                                                style={{color: 'red'}}
-                                            />
-                                        )}
+                                        {order.isDelivered 
+                                            ? order.deliveredAt.substring(0, 10)
+                                            : <i className='fas fa-times' style={{color: 'red'}}></i>
+                                        }
                                     </td>
                                     <td>
                                         <LinkContainer to={`/order/${order._id}`}>
