@@ -98,7 +98,7 @@ export const orderPayReducer = (state = {}, action) => {
 export const orderDeliverReducer = (state = {}, action) => {
     // Use switch to evaluate type in the action object
     switch (action.type) {
-        case ORDER_PAY_REQUEST:
+        case ORDER_DELIVER_REQUEST:
             return { 
                 loading: true 
             }
