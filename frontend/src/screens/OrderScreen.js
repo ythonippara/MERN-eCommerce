@@ -2,26 +2,32 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { PayPalButton } from 'react-paypal-button-v2'
 import { Link } from 'react-router-dom'
-import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap'
+import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getOrderDetails, payOrder } from '../actions/orderActions'
-import { ORDER_PAY_RESET } from '../constants/orderConstants'
+import { getOrderDetails, payOrder, deliverOrder } from '../actions/orderActions'
+import { ORDER_PAY_RESET, ORDER_DELIVER_RESET } from '../constants/orderConstants'
 
-const OrderScreen = ({ match }) => {
+const OrderScreen = ({ match, history }) => {
     const orderId = match.params.id
     // A piece of state that shows SDK is ready
     const [sdkReady, setSdkReady] = useState(false)
 
     const dispatch = useDispatch()
 
+    const userLogin = useSelector(state => state.userLogin)
+    const { userInfo } = userLogin
+
     const orderDetails = useSelector(state => state.orderDetails)
     const { order, loading, error } = orderDetails
 
     const orderPay = useSelector(state => state.orderPay)
     // Use : to rename an item to avoid duplicate names
-    const { loading:loadingPay, success:successPay } = orderPay
+    const { loading: loadingPay, success: successPay } = orderPay
+
+    const orderDeliver = useSelector(state => state.orderDeliver)
+    const { loading: loadingDeliver, success: successDeliver } = orderDeliver
 
     if(!loading) {
         // Show 2 decimals
@@ -36,6 +42,10 @@ const OrderScreen = ({ match }) => {
     }
 
     useEffect(() => {
+        if(!userInfo) {
+            history.push('/login')
+        }
+
         // Load PayPal script dynamically
         const addPayPalScript = async () => {
             // Fetch the Client ID from the backend
@@ -56,8 +66,9 @@ const OrderScreen = ({ match }) => {
         // 1. Check for the order, if doesn't exist load the details..
         // 2. Make sure that the order ID matches the ID in the URL
         // 3. If payment is successful load the order again
-        if(!order || successPay || order._id !== orderId) {
+        if(!order || successPay || successDeliver || order._id !== orderId) {
             dispatch({ type: ORDER_PAY_RESET })
+            dispatch({ type: ORDER_DELIVER_RESET })
             // If it does not, fetch the most recent order
             dispatch(getOrderDetails(orderId))
             // Check if the order has been paid
@@ -69,11 +80,15 @@ const OrderScreen = ({ match }) => {
                 setSdkReady(true)
             }
         }
-    }, [dispatch, order, orderId, successPay])
+    }, [dispatch, order, orderId, successPay, successDeliver, history, userInfo])
 
     const successPaymentHandler = (paymentResult) => {
         console.log(paymentResult)
         dispatch(payOrder(orderId, paymentResult))
+    }
+
+    const successDeliverHandler = () => {
+        dispatch(deliverOrder(order))
     }
 
     return loading ? (
@@ -196,6 +211,19 @@ const OrderScreen = ({ match }) => {
                                         >
                                         </PayPalButton>
                                     )}
+                                </ListGroup.Item>
+                            )}
+                            
+                            {loadingDeliver && <Loader />}
+                            {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                                <ListGroup.Item>
+                                    <Button 
+                                        type='button'
+                                        className='btn btn-block'
+                                        onClick={successDeliverHandler}
+                                    >
+                                        Mark As Delivered
+                                    </Button>
                                 </ListGroup.Item>
                             )}
 
