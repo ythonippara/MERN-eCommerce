@@ -2,6 +2,12 @@ import mongoose from 'mongoose'
 
 // Review schema contains individual reviews and ratings
 const reviewSchema = mongoose.Schema({
+    // Add a relationship between a review and a user
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        requred: true,
+        ref: 'User'
+    },
     name: { type: String, required: true },
     rating: { type: Number, required: true },
     comment: { type: String, required: true }
