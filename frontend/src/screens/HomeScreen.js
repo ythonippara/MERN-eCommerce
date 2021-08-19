@@ -1,13 +1,15 @@
 //import React, { useState, useEffect } from 'react'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { Row, Col } from 'react-bootstrap'
 import Product from '../components/Product'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
 import Paginate from '../components/Paginate'
 import ProductCarousel from '../components/ProductCarousel'
-import { listProducts, listTopProducts } from '../actions/productActions'
+import Meta from '../components/Meta'
+import { listProducts } from '../actions/productActions'
 //import axios from 'axios'
 
 const HomeScreen = ({ match }) => {
@@ -43,7 +45,13 @@ const HomeScreen = ({ match }) => {
 
     return (
         <>
-        {!keyword && <ProductCarousel /> }
+        <Meta />
+        {/*<Helmet>
+            <title>Welcome To Proshop</title>
+            <meta name='description' content='We sell the best products for cheap'></meta>
+            <meta name='keywords' content='electronics, buy electronics, cheap electronics'></meta>
+        </Helmet>*/}
+        {!keyword ? <ProductCarousel /> : <Link to='/' className='btn btn-light'>GO BACK</Link>}
             <h1>Latest Products</h1>
             {loading ? <Loader />
             : error ? <Message variant='danger'>{error}</Message> 
