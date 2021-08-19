@@ -34,7 +34,7 @@ const HomeScreen = ({ match }) => {
 
     const dispatch = useDispatch()
 
-    const productList = useSelector(state => state.productList)
+    const productList = useSelector((state) => state.productList)
     // Destructure productList
     const {loading, error, products, pages, page } = productList
 
