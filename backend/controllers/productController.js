@@ -26,8 +26,12 @@ const getProducts = asyncHandler(async (req, res) => {
      const count = await Product.countDocuments({ ...keyword })
 
     // Use Product model pass empty object will the data
-    const products = await Product.find({ ...keyword })
+    const products = await Product
+        .find({ ...keyword })
+        // Limit by page size (if pageSize = 2, return 2 products).
         .limit(pageSize)
+        // Page 1:  2*(1-1) = 0, so skip 0 products. 
+        // Page 2:  2*(2-1) = 2, so skip 2 products.
         .skip(pageSize * (page - 1))
 
     // Test error message for videos 28 and 29
@@ -35,6 +39,7 @@ const getProducts = asyncHandler(async (req, res) => {
     //throw new Error ('Not Authorized!')
 
     // Serve json array
+    // If we have four products, count = 4 and pages would be 4 / 2 = 2 pages
     res.json({ products, page, pages: Math.ceil(count / pageSize) })
 })
 
