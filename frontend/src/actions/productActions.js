@@ -22,12 +22,13 @@ import {
 
 // Actions
 // Use redux-thunk for async requests
-export const listProducts = () => async (dispatch) => {
+// Pass in keyword for seacrh function
+export const listProducts = (keyword = '') => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_LIST_REQUEST })
 
         // Use axios
-        const { data } = await axios.get('/api/products')
+        const { data } = await axios.get(`/api/products?keyword=${keyword}`)
 
         dispatch({
             type: PRODUCT_LIST_SUCCESS,

@@ -8,7 +8,7 @@ import Loader from '../components/Loader'
 import { listProducts } from '../actions/productActions'
 //import axios from 'axios'
 
-const HomeScreen = () => {
+const HomeScreen = ({ match }) => {
     // products - state name, setproducts - function to manipulate products
     // Then pass an empty array to useState
     //const [products, setProducts] = useState([])
@@ -24,6 +24,8 @@ const HomeScreen = () => {
         // Pass in array of dependencies to fire off side effects??
     //}, [])
 
+    const keyword = match.params.keyword
+
     const dispatch = useDispatch()
 
     const productList = useSelector(state => state.productList)
@@ -31,9 +33,9 @@ const HomeScreen = () => {
     const {loading, error, products } = productList
 
     useEffect(() => {
-        dispatch(listProducts())
+        dispatch(listProducts(keyword))
         // Add dispatch as a dependency to avoid console warning
-    }, [dispatch])
+    }, [dispatch, keyword])
 
     return (
         <>

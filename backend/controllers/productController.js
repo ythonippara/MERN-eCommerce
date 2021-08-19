@@ -5,8 +5,19 @@ import Product from '../models/productModel.js'
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
+    // req.query gets query strings
+    const keyword = req.query.keyword ? { 
+        // Match keyword to the name
+        name: {
+            // Use regular expressions
+            $regex: req.query.keyword,
+            // What is options for?
+            $options: 'i'
+        }
+     } : {}
+
     // Use Product model pass empty object will the data
-    const products = await Product.find({})
+    const products = await Product.find({ ...keyword })
     // Test error message for videos 28 and 29
     //res.status(401)
     //throw new Error ('Not Authorized!')
