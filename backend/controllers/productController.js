@@ -5,6 +5,12 @@ import Product from '../models/productModel.js'
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
+    // Limit the number of products displayed on the page
+    const pageSize = 10
+
+    // Get page number from the URL, or set it to 1
+    const page = Number(req.query.pageNumber) || 1
+
     // req.query gets query strings
     const keyword = req.query.keyword ? { 
         // Match keyword to the name
@@ -16,13 +22,20 @@ const getProducts = asyncHandler(async (req, res) => {
         }
      } : {}
 
+     // Get the total count of products
+     const count = await Product.countDocuments({ ...keyword })
+
     // Use Product model pass empty object will the data
     const products = await Product.find({ ...keyword })
+        .limit(pageSize)
+        .skip(pageSize * (page - 1))
+
     // Test error message for videos 28 and 29
     //res.status(401)
     //throw new Error ('Not Authorized!')
+
     // Serve json array
-    res.json(products)
+    res.json({ products, page, pages: Math.ceil(count / pageSize) })
 })
 
 // @desc    Fetch a single product
